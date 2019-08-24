@@ -41,7 +41,7 @@ Each file has parameters at the top which can be changed in order to replicate t
 
 \[1\]: Ian Osband, TabulaRL (2017), Github Repository. https://github.com/iosband/TabulaRL
 
-\[2\]: Sean R. Sinclair, Siddhartha Banerjee, Christina Yu. *Adaptive Discretization for Episodic Reinforcement Learning in Metric Spaces.*
-Available [coming soon]().
+\[2\]: Siddhartha Banerjee, Sean R. Sinclair, Christina Yu. *Adaptive Discretization for Episodic Reinforcement Learning in Metric Spaces.*
+[Coming soon]().
 
 \[3\]: Zhao Song, Wen Sun. *Efficient Model-free Reinfrocement Learning in Metric Spaces.* Available [here](https://arxiv.org/abs/1905.00475).
