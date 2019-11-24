@@ -12,7 +12,7 @@ import pickle
 ''' Defining parameters to be used in the experiment'''
 
 epLen = 5
-nEps = 2000
+nEps = 5
 numIters = 50
 loc = 0.8+np.pi/60
 scale = 2
