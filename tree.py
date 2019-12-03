@@ -155,6 +155,28 @@ class Tree():
     # Helper method which checks if a state is within the node
     def state_within_node(self, state, node):
         return np.abs(state - node.state_val) <= node.radius
+    
+    # method to get maximum depth in graph
+    def max_depth(self,node):
+        if node.children == None:
+            return 1
+        val = 0
+        for child in node.children:
+            val = max(self.max_depth(child),val)
+        return val + 1
+
+    # method to compute number of balls per depth
+    def num_per_depth(self,node, depth):
+        if depth == 0:
+            return 1
+        if node.children == None:
+            return 0
+        else:
+            sum = 0
+            for child in node.children:
+                sum += self.num_per_depth(child, depth-1)
+            return sum
+            
 
 '''The tree class consists of a hierarchy of nodes for multiple ambulances'''
 class Tree_Multiple_Ambulance():
@@ -231,3 +253,25 @@ class Tree_Multiple_Ambulance():
     # Helper method which checks if a state is within the node
     def state_within_node(self, state, node):
         return max(np.abs(state[0] - node.state_val[0]), np.abs(state[1] - node.state_val[1])) <= node.radius
+
+    # method to get maximum depth in graph
+    def max_depth(self,node):
+        if node.children == None:
+            return 1
+        val = 0
+        for child in node.children:
+            val = max(self.max_depth(child),val)
+        return val + 1
+
+    # method to compute number of balls per depth
+    def num_per_depth(self,node, depth):
+        if depth == 0:
+            return 1
+        if node.children == None:
+            return 0
+        else:
+            sum = 0
+            for child in node.children:
+                sum += self.num_per_depth(child, depth-1)
+            return sum
+        
