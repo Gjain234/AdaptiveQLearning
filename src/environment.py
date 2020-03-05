@@ -380,6 +380,57 @@ class Stochastic_MultipleAmbulanceEnvironment(Environment):
         self.timestep += 1
         return reward, self.state, pContinue
 
+'''Implementation of a continuous environment using the AI Gym from Google'''
+class PendulumEnvironment(Environment):
+    def __init__(self, epLen, render):
+        '''
+            env - AI Gym Environment
+            epLen - Number of steps per episode
+        '''
+        self.env = gym.make('Pendulum-v0')
+        self.epLen = epLen
+        self.timestep = 0
+        self.render_bool = render
+        self.state = self.env.reset()
+        self.state = ((self.state[0] + 1) / 2, (self.state[1] + 1) / 2, (self.state[2] + 8) / 16)
+
+    def get_epLen(self):
+        return self.epLen
+
+    def reset(self):
+        '''Reset the environment'''
+        self.timestep = 0
+        self.state = self.env.reset()
+
+        self.state = ((self.state[0] + 1) / 2, (self.state[1] + 1) / 2, (self.state[2] + 8) / 16)
+        if self.render_bool:
+            self.env.render()
+
+    def advance(self, action):
+        '''
+        Move one step in the environment
+
+        Args:
+        action - int - chosen action
+        Returns:
+            reward - double - reward
+            newState - int - new state
+            pContinue - 0/1 - flag for end of the episode
+        '''
+        newState, reward, terminal, info = self.env.step([(action*4 - 2)])
+        newState = ((newState[0] + 1) / 2, (newState[1] + 1) / 2, (newState[2] + 8) / 16)
+        reward = (reward + 16.2736044) / 16.2736044
+        if self.render_bool:
+            self.env.render()
+
+        if self.timestep == self.epLen or terminal:
+            pContinue = 0
+            self.reset()
+        else:
+            pContinue = 1
+
+        return reward, newState, pContinue
+
 #-------------------------------------------------------------------------------
 # Benchmark environments used when running an experiment
 
@@ -406,3 +457,6 @@ def make_ambulanceEnvMDP_multiple(epLen, arrivals, alpha, starting_state):
 
 def make_ambulanceEnvMDP_stochastic(epLen, arrivals, alpha, starting_state):
     return Stochastic_MultipleAmbulanceEnvironment(epLen, arrivals, alpha, starting_state)
+
+def make_pendulumEnvironment(epLen, bool):
+    return PendulumEnvironment(epLen, bool)

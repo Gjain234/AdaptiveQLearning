@@ -1,6 +1,7 @@
 '''
 Script to run simple continuous RL experiments.
 '''
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -51,8 +52,10 @@ class Experiment(object):
         print('**************************************************')
         for i in range(self.num_iters):
             agent = self.agent_list[i]
+            print('Scaling : ' + str(agent.scaling))
             for ep in range(1, self.nEps+1):
                 print('Episode : ' + str(ep))
+                print('Iteration : ' + str(i))
                 # Reset the environment
                 self.env.reset()
                 oldState = self.env.state
@@ -69,7 +72,6 @@ class Experiment(object):
                     action = agent.pick_action(oldState, h)
                     if self.deBug:
                         print('action : ' + str(action))
-
                     reward, newState, pContinue = self.env.advance(action)
                     epReward += reward
 
@@ -78,7 +80,6 @@ class Experiment(object):
                     h = h + 1
                 if self.deBug:
                     print('final state: ' + str(newState))
-                print('Total Reward: ' + str(epReward))
 
                 # Logging to dataframe
                 if ep % self.epFreq == 0:
@@ -87,7 +88,8 @@ class Experiment(object):
                     self.data[index, 1] = i
                     self.data[index, 2] = epReward
                     self.data[index, 3] = agent.get_num_arms()
-
+                #print('Tree Depth : ' + str(agent.tree.max_depth(agent.tree.get_head())))
+                print('Reward : ' + str(epReward))
         print('**************************************************')
         print('Experiment complete')
         print('**************************************************')

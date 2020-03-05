@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from adaptive_Agent import AdaptiveDiscretization
+from agents import pendulum_agent
 from eNet_Agent import eNet
 from src import environment
 from src import experiment
@@ -19,19 +19,20 @@ numIters = 2
 
 
 
-env = environment.makeTestMDP(epLen)
+env = environment.make_pendulumEnvironment(epLen,False)
 
+print(1)
 scaling = 0.5
 agent_list_adap = []
 for _ in range(numIters):
-    agent_list_adap.append(AdaptiveDiscretization(epLen, nEps, scaling))
+    agent_list_adap.append(pendulum_agent.PendulumAgent(epLen, nEps, scaling))
 
 dict = {'seed': 1, 'epFreq' : 1, 'targetPath': './tmp.csv', 'deBug' : False, 'nEps': nEps, 'recFreq' : 1, 'numIters' : numIters}
 
 exp = experiment.Experiment(env, agent_list_adap, dict)
 exp.run()
 dt_adapt = exp.save_data()
-
+print(2)
 epsilon = (nEps * epLen)**(-1 / 4)
 action_net = np.arange(start=0, stop=1, step=epsilon)
 state_net = np.arange(start=0, stop=1, step=epsilon)
@@ -41,10 +42,11 @@ agent_list = []
 for _ in range(numIters):
     agent_list.append(eNet(action_net, state_net, epLen, scaling))
 
+print(3)
 exp = experiment.Experiment(env, agent_list, dict)
 exp.run()
 dt_net = exp.save_data()
-
+print(4)
 fig = plt.figure()
 plt.subplot(1,2,1)
 plt.errorbar(dt_adapt['episode'], dt_adapt['epReward'], label = 'Adaptive Zooming')

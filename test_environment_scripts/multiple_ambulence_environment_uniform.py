@@ -1,12 +1,8 @@
-import gym
 import numpy as np
-from adaptive_Agent import AdaptiveDiscretization, AdaptiveDiscretizationMultiple
 from eNet_Agent import eNet_Multiple
-from data_Agent import dataUpdateAgent
+from agents import multiple_ambulance_agent
 from src import environment
-from src import multiple_ambulance_experiment
-from src import agent
-import pickle
+from src import experiment
 
 
 ''' Defining parameters to be used in the experiment'''
@@ -21,6 +17,7 @@ def arrivals(step):
 
 alpha = [0, 0.25, 1]
 scaling_list = [0.01, 0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 1, 1.5, 2, 5]
+scaling_list = [.01]
 for a in alpha:
     starting_state = (0.5,0.5)
 
@@ -46,11 +43,11 @@ for a in alpha:
 
         agent_list_adap = []
         for _ in range(numIters):
-            agent_list_adap.append(AdaptiveDiscretizationMultiple(epLen, nEps, scaling))
+            agent_list_adap.append(multiple_ambulance_agent.MultipleAmbulanceAgent(epLen, nEps, scaling))
 
         dict = {'seed': 1, 'epFreq' : 1, 'targetPath': './tmp.csv', 'deBug' : False, 'nEps': nEps, 'recFreq' : 10, 'numIters' : numIters}
 
-        exp = multiple_ambulance_experiment.Experiment(env1, agent_list_adap, dict)
+        exp = experiment.Experiment(env1, agent_list_adap, dict)
         adap_fig = exp.run()
         dt_adapt_data = exp.save_data()
 
@@ -63,9 +60,9 @@ for a in alpha:
         # RUNNING EXPERIMENT FOR ADAPTIVE ALGORITHM - STOCHASTIC VERSION
         agent_list_adap_stochastic = []
         for _ in range(numIters):
-            agent_list_adap_stochastic.append(AdaptiveDiscretizationMultiple(epLen, nEps, scaling))
+            agent_list_adap_stochastic.append(multiple_ambulance_agent.MultipleAmbulanceAgent(epLen, nEps, scaling))
 
-        exp = multiple_ambulance_experiment.Experiment(env2, agent_list_adap_stochastic, dict)
+        exp = experiment.Experiment(env2, agent_list_adap_stochastic, dict)
         adap_fig_stochastic = exp.run()
         dt_adapt_stochastic_data = exp.save_data()
 
@@ -84,7 +81,7 @@ for a in alpha:
         for _ in range(numIters):
             agent_list.append(eNet_Multiple(action_net, state_net, epLen, scaling))
 
-        exp = multiple_ambulance_experiment.Experiment(env1, agent_list, dict)
+        exp = experiment.Experiment(env1, agent_list, dict)
         exp.run()
         dt_net_data = exp.save_data()
 
@@ -95,7 +92,7 @@ for a in alpha:
 
         # RUNNING EXPERIMENT FOR EPSILON NET ALGORITHM STOCHASTIC   
 
-        exp = multiple_ambulance_experiment.Experiment(env2, agent_list, dict)
+        exp = experiment.Experiment(env2, agent_list, dict)
         exp.run()
         dt_net_stochastic_data = exp.save_data()
 

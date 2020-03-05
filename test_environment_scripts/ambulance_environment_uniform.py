@@ -1,10 +1,11 @@
+import gym
 import numpy as np
-from agents import ambulance_agent
+from adaptive_Agent import AdaptiveDiscretization
 from eNet_Agent import eNet
-from eNet_Agent import eNetAmbulancce
 from data_Agent import dataUpdateAgent
 from src import environment
 from src import experiment
+from src import agent
 import pickle
 
 
@@ -29,6 +30,7 @@ env = environment.make_ambulanceEnvMDP(epLen, arrivals, alpha, starting_state)
 scaling_list = [0.01, 0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 1, 1.5, 2, 5]
 # scaling_list = [0.25, .01] # alpha = 0.25
 # scaling_list = [0.25, .1] # alpha = 1
+# scaling_list = [0.1] # alpha = 0
 max_reward_adapt = 0
 max_reward_e_net = 0
 opt_adapt_scaling = 0.01
@@ -41,7 +43,7 @@ for scaling in scaling_list:
 
     agent_list_adap = []
     for _ in range(numIters):
-        agent_list_adap.append(ambulance_agent.AmbulanceAgent(epLen, nEps, scaling))
+        agent_list_adap.append(AdaptiveDiscretization(epLen, nEps, scaling))
 
     dict = {'seed': 1, 'epFreq' : 1, 'targetPath': './tmp.csv', 'deBug' : False, 'nEps': nEps, 'recFreq' : 10, 'numIters' : numIters}
 
@@ -63,7 +65,7 @@ for scaling in scaling_list:
 
     agent_list = []
     for _ in range(numIters):
-        agent_list.append(eNet(action_net, state_net, epLen, scaling, (1,1)))
+        agent_list.append(eNet(action_net, state_net, epLen, scaling))
 
     exp = experiment.Experiment(env, agent_list, dict)
     exp.run()
@@ -106,16 +108,10 @@ dt_no_move = exp.save_data()
 
 # SAVING DATA TO CSV
 
-dt_adapt.to_csv('data/ambulance_uniform_adapt_1.csv')
-dt_net.to_csv('data/ambulance_uniform_net_1.csv')
-dt_median.to_csv('data/ambulance_uniform_median_1.csv')
-dt_no_move.to_csv('data/ambulance_uniform_no_1.csv')
+dt_adapt.to_csv('ambulance_uniform_adapt_1.csv')
+dt_net.to_csv('ambulance_uniform_net_1.csv')
+dt_median.to_csv('ambulance_uniform_median_1.csv')
+dt_no_move.to_csv('ambulance_uniform_no_1.csv')
 agent = opt_adapt_agent_list[-1]
-filehandler = open('data/ambulance_uniform_agent_1.obj', 'wb')
+filehandler = open('ambulance_uniform_agent_1.obj', 'wb')
 pickle.dump(agent, filehandler)
-
-
-X[a,b,c]
-
-X[i, :]
-X[j, :]
