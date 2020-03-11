@@ -2,7 +2,7 @@
 Script to run simple continuous RL experiments.
 '''
 import pickle
-
+import time
 import numpy as np
 import pandas as pd
 from src import agent
@@ -13,7 +13,7 @@ from shutil import copyfile
 
 class Experiment(object):
 
-    def __init__(self, env, agent_list, dict):
+    def __init__(self, env, agent_list, dict, save=False):
         '''
         A simple class to run a MDP Experiment.
 
@@ -40,6 +40,7 @@ class Experiment(object):
         self.epLen = env.get_epLen()
         self.num_iters = dict['numIters']
         self.agent_list = agent_list
+        self.save = save
 
         self.data = np.zeros([dict['nEps']*self.num_iters, 4])
 
@@ -50,9 +51,11 @@ class Experiment(object):
         print('**************************************************')
         print('Running experiment')
         print('**************************************************')
+        pickle_agent_count = 0
         for i in range(self.num_iters):
             agent = self.agent_list[i]
             print('Scaling : ' + str(agent.scaling))
+            max_reward = 0
             for ep in range(1, self.nEps+1):
                 print('Episode : ' + str(ep))
                 print('Iteration : ' + str(i))
@@ -61,7 +64,7 @@ class Experiment(object):
                 oldState = self.env.state
                 epReward = 0
 
-                agent.update_policy(ep)
+                #agent.update_policy(ep)
 
                 pContinue = 1
                 h = 0
@@ -74,13 +77,12 @@ class Experiment(object):
                         print('action : ' + str(action))
                     reward, newState, pContinue = self.env.advance(action)
                     epReward += reward
-
                     agent.update_obs(oldState, action, reward, newState, h)
+                    
                     oldState = newState
                     h = h + 1
                 if self.deBug:
                     print('final state: ' + str(newState))
-
                 # Logging to dataframe
                 if ep % self.epFreq == 0:
                     index = i*ep - 1
@@ -88,8 +90,14 @@ class Experiment(object):
                     self.data[index, 1] = i
                     self.data[index, 2] = epReward
                     self.data[index, 3] = agent.get_num_arms()
-                #print('Tree Depth : ' + str(agent.tree.max_depth(agent.tree.get_head())))
+                if epReward>max_reward:
+                    max_reward = epReward
                 print('Reward : ' + str(epReward))
+            if self.save:
+                if max_reward>10 and pickle_agent_count<=5:
+                    filehandler = open('e_net_agent_'+str(pickle_agent_count)+'.obj', 'wb')
+                    pickle.dump(agent, filehandler)
+                    pickle_agent_count+=1
         print('**************************************************')
         print('Experiment complete')
         print('**************************************************')
