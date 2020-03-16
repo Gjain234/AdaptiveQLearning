@@ -86,6 +86,7 @@ class MultipleAmbulanceTree(tree.Tree):
     def __init__(self, epLen):
         self.head = MultipleAmbulanceNode(epLen, 0, 0, (0.5, 0.5), (0.5, 0.5), 0.5)
         self.epLen = epLen
+        self.count = 0
 
     # Helper method which checks if a state is within the node
     def state_within_node(self, state, node):

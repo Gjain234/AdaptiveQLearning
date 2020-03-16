@@ -49,6 +49,7 @@ class PendulumTree(tree.Tree):
     def __init__(self, max_reward):
         self.head = PendulumNode(max_reward, 0, 0, (0.5, 0.5, 0.5), 0.5, 0.5)
         self.epLen = max_reward
+        self.count = 0
 
     # def get_active_ball_recursion(self, state, node, step):
     #     # If the node doesn't have any children, then the largest one
@@ -82,4 +83,5 @@ class PendulumTree(tree.Tree):
 
     # Helper method which checks if a state is within the node
     def state_within_node(self, state, node):
-        return max(np.abs(state[0] - node.state_val[0]), np.abs(state[1] - node.state_val[1]), np.abs(state[2] - node.state_val[2])) <= node.radius
+        #, np.abs(state[2] - node.state_val[2])
+        return max(np.abs(state[0] - node.state_val[0]), np.abs(state[1] - node.state_val[1])) <= node.radius

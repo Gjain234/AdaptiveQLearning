@@ -52,9 +52,14 @@ class Experiment(object):
         print('Running experiment')
         print('**************************************************')
         pickle_agent_count = 0
+        best_ind = -1
+        sec_best_ind = -1
+        best_avg = 0
+        sec_best_avg = 0
         for i in range(self.num_iters):
             agent = self.agent_list[i]
             print('Scaling : ' + str(agent.scaling))
+            total_reward = 0
             max_reward = 0
             for ep in range(1, self.nEps+1):
                 print('Episode : ' + str(ep))
@@ -92,12 +97,24 @@ class Experiment(object):
                     self.data[index, 3] = agent.get_num_arms()
                 if epReward>max_reward:
                     max_reward = epReward
+                total_reward += epReward
                 print('Reward : ' + str(epReward))
-            if self.save:
-                if max_reward>10 and pickle_agent_count<=5:
-                    filehandler = open('e_net_agent_'+str(pickle_agent_count)+'.obj', 'wb')
-                    pickle.dump(agent, filehandler)
-                    pickle_agent_count+=1
+            avg = total_reward/self.nEps >best_avg
+            if avg>best_avg:
+                sec_best_ind = best_ind
+                best_ind = i
+                sec_best_avg = best_avg
+                best_avg = avg
+            elif avg>sec_best_avg:
+                sec_best_ind = i
+                sec_best_avg = avg
+        if self.save:
+            filehandler = open('e_net_agent_best.obj', 'wb')
+            pickle.dump(self.agent_list[best_ind], filehandler)
+
+            filehandler2 = open('e_net_agent_second_best.obj', 'wb')
+            pickle.dump(self.agent_list[sec_best_ind], filehandler2)
+
         print('**************************************************')
         print('Experiment complete')
         print('**************************************************')

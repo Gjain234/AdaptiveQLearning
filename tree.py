@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import time
 
 ''' Implementation of a tree structured used in the Adaptive Discretization Algorithm'''
 
@@ -81,6 +82,7 @@ class Tree():
     def get_active_ball_recursion(self, state, node):
         # If the node doesn't have any children, then the largest one
         # in the subtree must be itself
+        self.count+=1
         if node.children == None:
             return node, node.qVal
         else:
@@ -94,11 +96,10 @@ class Tree():
                     new_node, new_qVal = self.get_active_ball_recursion(state, child)
                     if new_qVal >= qVal:
                         active_node, qVal = new_node, new_qVal
-                else:
-                    pass
         return active_node, qVal
 
     def get_active_ball(self, state):
+        self.count = 0
         active_node, qVal = self.get_active_ball_recursion(state, self.head)
         return active_node, qVal
 
